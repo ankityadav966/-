@@ -1,5 +1,5 @@
 import React from 'react';
-import { Leaf, GraduationCap, Building2, Smartphone, ArrowRight, MapPin, Zap, Droplets } from 'lucide-react';
+import { Leaf, GraduationCap, Building2, Smartphone, ArrowRight, MapPin } from 'lucide-react';
 import { useIntersectionObserver } from '../hooks/useAnimations';
 
 interface Card {

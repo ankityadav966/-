@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import {
   Menu, X, Leaf, GraduationCap, Building2, Smartphone, ChevronRight,
   ArrowRight, Phone, Star, MapPin, CheckCircle, Wifi, Users, TrendingUp,
-  Sun, Droplets, Zap, Home, Shield, BookOpen, Globe, Instagram, Facebook,
-  Youtube, Heart, Award, Clock, AlertCircle, ChevronDown
+  Sun, Droplets, Zap, Home, Shield, BookOpen, Globe,
+  Heart, Award, Clock, AlertCircle, ChevronDown
 } from 'lucide-react';
 import { useScrollReveal } from './hooks/useAnimations';
 import Navbar from './components/Navbar';
@@ -26,8 +26,8 @@ export {
   useState, useEffect,
   Menu, X, Leaf, GraduationCap, Building2, Smartphone, ChevronRight,
   ArrowRight, Phone, Star, MapPin, CheckCircle, Wifi, Users, TrendingUp,
-  Sun, Droplets, Zap, Home, Shield, BookOpen, Globe, Instagram, Facebook,
-  Youtube, Heart, Award, Clock, AlertCircle, ChevronDown,
+  Sun, Droplets, Zap, Home, Shield, BookOpen, Globe,
+  Heart, Award, Clock, AlertCircle, ChevronDown,
   useScrollReveal,
   Navbar, Hero, DevelopmentStats, DevelopmentCards, FarmerSection,
   EducationSection, InfrastructureSection, PanchayatSection,

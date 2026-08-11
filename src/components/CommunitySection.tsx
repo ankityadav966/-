@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Star, Users } from 'lucide-react';
+import { Users } from 'lucide-react';
 import { useIntersectionObserver } from '../hooks/useAnimations';
 
 const highlights = [

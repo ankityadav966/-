@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowRight, ChevronDown, Users, Leaf, GraduationCap, Shield } from 'lucide-react';
+import { ArrowRight, ChevronDown, Users, GraduationCap, Shield } from 'lucide-react';
 
 const Hero: React.FC = () => {
   const [loaded, setLoaded] = useState(false);

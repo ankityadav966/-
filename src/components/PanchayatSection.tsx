@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Building2, FileText, Bell, MessageSquare, TrendingUp } from 'lucide-react';
 import { useIntersectionObserver } from '../hooks/useAnimations';
 

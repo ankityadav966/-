@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, CheckCircle, TrendingUp, Globe, Sun } from 'lucide-react';
+import { ArrowRight, CheckCircle, TrendingUp, Sun } from 'lucide-react';
 import { useIntersectionObserver } from '../hooks/useAnimations';
 
 const features = [

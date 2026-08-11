@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown } from 'lucide-react';
+
 
 const navLinks = [
   { label: 'होम', href: '#home' },
