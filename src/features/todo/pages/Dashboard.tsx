@@ -291,15 +291,20 @@ export default function Dashboard() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // Sync / Fetch from API
+  // Sync / Fetch from Products API
   const { refetch } = useQuery({
-    queryKey: ['todos'],
+    queryKey: ['products'],
     queryFn: async () => {
       try {
-        const res = await axios.get(`${VITE_API_URL}/todos?limit=50`);
-        return res.data;
+        const res = await axios.get(`${VITE_API_URL}/products?limit=50`);
+        if (res.data?.success && Array.isArray(res.data?.data) && res.data.data.length > 0) {
+          setLocalProducts(res.data.data);
+          localStorage.setItem('suryapura_products_cache', JSON.stringify(res.data.data));
+          return res.data.data;
+        }
+        return null;
       } catch (err) {
-        console.warn('API sync fallback to local store:', err);
+        console.warn('API sync note: using cached store');
         return null;
       }
     },
@@ -309,24 +314,50 @@ export default function Dashboard() {
   const createMutation = useMutation({
     mutationFn: async (newProd: ProductItem) => {
       try {
-        await axios.post(`${VITE_API_URL}/todos`, {
+        const res = await axios.post(`${VITE_API_URL}/products`, {
           title: newProd.title,
           description: newProd.description,
-          priority: newProd.priority,
+          price: newProd.price,
+          originalPrice: newProd.originalPrice,
+          category: newProd.category,
+          stock: newProd.stock,
+          unit: newProd.unit,
+          rating: newProd.rating,
+          badge: newProd.badge,
+          image: newProd.image,
+          seller: newProd.seller,
         });
+        if (res.data?.data) {
+          return res.data.data;
+        }
       } catch (e) {
-        console.warn('Backend offline, saved locally');
+        console.warn('Backend API note, saved locally');
       }
       return newProd;
     },
     onSuccess: (newProd) => {
-      const updated = [newProd, ...localProducts];
+      const updated = [newProd, ...localProducts.filter((p) => p.id !== newProd.id)];
       setLocalProducts(updated);
       localStorage.setItem('suryapura_products_cache', JSON.stringify(updated));
-      queryClient.invalidateQueries({ queryKey: ['todos'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       setIsAddModalOpen(false);
       reset();
       showToast(`✅ "${newProd.title}" सफलतापूर्वक जोड़ा गया!`);
+    },
+  });
+
+  // Update Mutation
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<ProductItem> }) => {
+      try {
+        await axios.put(`${VITE_API_URL}/products/${id}`, data);
+      } catch (e) {
+        console.warn('Backend update note, saved locally');
+      }
+      return { id, data };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
     },
   });
 
@@ -334,7 +365,7 @@ export default function Dashboard() {
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       try {
-        await axios.delete(`${VITE_API_URL}/todos/${id}`);
+        await axios.delete(`${VITE_API_URL}/products/${id}`);
       } catch (e) {
         console.warn('Backend delete sync note');
       }
@@ -344,6 +375,7 @@ export default function Dashboard() {
       const updated = localProducts.filter((p) => p.id !== deletedId);
       setLocalProducts(updated);
       localStorage.setItem('suryapura_products_cache', JSON.stringify(updated));
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       setDeleteTarget(null);
       showToast('🗑️ उत्पाद सफलतापूर्वक हटा दिया गया!');
     },
@@ -353,21 +385,26 @@ export default function Dashboard() {
   const onSubmit = (data: ProductFormValues) => {
     if (editingProduct) {
       // Update existing
+      const updatedFields = {
+        title: data.title,
+        description: data.description || '',
+        price: parseFloat(formPrice) || editingProduct.price,
+        originalPrice: parseFloat(formOriginalPrice) || editingProduct.originalPrice,
+        category: formCategory,
+        stock: parseInt(formStock, 10) || editingProduct.stock,
+        unit: formUnit,
+        seller: formSeller,
+        badge: formBadge,
+        image: formImage,
+      };
+
+      updateMutation.mutate({ id: editingProduct.id, data: updatedFields });
+
       const updatedList = localProducts.map((p) => {
         if (p.id === editingProduct.id) {
           return {
             ...p,
-            title: data.title,
-            description: data.description || '',
-            priority: data.priority || 'MEDIUM',
-            price: parseFloat(formPrice) || p.price,
-            originalPrice: parseFloat(formOriginalPrice) || p.originalPrice,
-            category: formCategory,
-            stock: parseInt(formStock, 10) || p.stock,
-            unit: formUnit,
-            seller: formSeller,
-            badge: formBadge,
-            image: formImage,
+            ...updatedFields,
             updatedAt: new Date().toISOString(),
           };
         }
