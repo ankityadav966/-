@@ -12,10 +12,19 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          
+          {/* Support /todos */}
+          <Route path="/todos" element={<TodoLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="dashboard" element={<Dashboard />} />
+          </Route>
+
+          {/* Support /ankit & /ankit/yadav */}
           <Route path="/ankit" element={<TodoLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="yadav" element={<Dashboard />} />
           </Route>
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
