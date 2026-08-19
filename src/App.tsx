@@ -15,6 +15,7 @@ function App() {
           <Route path="/ankityadav" element={<TodoLayout />}>
             <Route index element={<Dashboard />} />
           </Route>
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
