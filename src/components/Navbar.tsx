@@ -9,6 +9,7 @@ const navLinks = [
   { label: 'सड़क एवं सुविधाएँ', href: '#infrastructure' },
   { label: 'पंचायत', href: '#panchayat' },
   { label: 'डिजिटल सेवाएँ', href: '#digital' },
+  { label: 'टास्क/Todo', href: '/todos' },
 ];
 
 const Navbar: React.FC = () => {
@@ -23,6 +24,10 @@ const Navbar: React.FC = () => {
 
   const handleNavClick = (href: string) => {
     setMenuOpen(false);
+    if (href.startsWith('/')) {
+      window.location.href = href;
+      return;
+    }
     const el = document.querySelector(href);
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };

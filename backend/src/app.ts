@@ -1,38 +1,48 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Application } from 'express';
 import cors from 'cors';
-import helmet from 'helmet';
 import swaggerUi from 'swagger-ui-express';
-import YAML from 'yamljs';
-import path from 'path';
-import authRoutes from './routes/authRoutes';
-import todoRoutes from './routes/todoRoutes';
+import swaggerJsDoc from 'swagger-jsdoc';
+import todoRoutes from './routes/todo.routes';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 
-const app = express();
+const app: Application = express();
 
-app.use(helmet());
+// Middlewares
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Load Swagger document
-let swaggerDocument;
-try {
-  swaggerDocument = YAML.load(path.join(__dirname, '../swagger.yaml'));
-  app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-} catch (e) {
-  console.warn('Swagger document not found, skipping /api/docs');
-}
+// Swagger Documentation
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Todo API (MVC Architecture)',
+      version: '1.0.0',
+      description: 'Production-ready REST API using Layered / MVC Architecture',
+    },
+    servers: [
+      {
+        url: '/api',
+      },
+    ],
+  },
+  apis: ['./src/routes/*.ts', './src/controllers/*.ts'],
+};
 
-// Routes
-app.use('/api/auth', authRoutes);
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+// Health Check
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+// API Routes
 app.use('/api/todos', todoRoutes);
 
-// Global Error Handler
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({
-    success: false,
-    message: err.message || 'Internal Server Error',
-  });
-});
+// Error & 404 Handlers
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;

@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { useAuth } from '../contexts/AuthContext';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Plus, Search, Trash2, Check, Clock, CheckSquare } from 'lucide-react';
-import { Navigate } from 'react-router-dom';
 
 const todoSchema = z.object({
   title: z.string().min(1, 'Title is required').max(255),
@@ -29,7 +27,6 @@ interface Todo {
 }
 
 export default function Dashboard() {
-  const { token, user } = useAuth();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [filterPriority, setFilterPriority] = useState<string>('');
@@ -40,7 +37,7 @@ export default function Dashboard() {
     defaultValues: { priority: 'MEDIUM' }
   });
 
-  const VITE_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const VITE_API_URL = import.meta.env.VITE_API_URL || 'https://api.durgagenerator.com/api';
 
   const { data, isLoading } = useQuery({
     queryKey: ['todos', search, filterPriority, filterCompleted],
@@ -50,23 +47,21 @@ export default function Dashboard() {
       if (filterPriority) params.append('priority', filterPriority);
       if (filterCompleted) params.append('completed', filterCompleted);
       
-      const res = await axios.get(`${VITE_API_URL}/todos?${params.toString()}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await axios.get(`${VITE_API_URL}/todos?${params.toString()}`);
       return res.data;
     },
-    enabled: !!token,
   });
 
   const createMutation = useMutation({
     mutationFn: async (newTodo: TodoFormValues) => {
-      // transform empty dueDate to null
-      const data = { ...newTodo, dueDate: newTodo.dueDate || null };
-      if (!data.dueDate) { data.dueDate = undefined as any; }
+      const data: any = { ...newTodo };
+      if (!data.dueDate) { 
+        data.dueDate = undefined as any; 
+      } else {
+        data.dueDate = new Date(data.dueDate).toISOString();
+      }
       
-      const res = await axios.post(`${VITE_API_URL}/todos`, data, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await axios.post(`${VITE_API_URL}/todos`, data);
       return res.data;
     },
     onSuccess: () => {
@@ -77,9 +72,7 @@ export default function Dashboard() {
 
   const toggleMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await axios.patch(`${VITE_API_URL}/todos/${id}/toggle`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await axios.patch(`${VITE_API_URL}/todos/${id}/toggle`, {});
       return res.data;
     },
     onSuccess: () => {
@@ -89,19 +82,13 @@ export default function Dashboard() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await axios.delete(`${VITE_API_URL}/todos/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await axios.delete(`${VITE_API_URL}/todos/${id}`);
       return res.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
   });
-
-  if (!user) {
-    return <Navigate to="/todos/login" replace />;
-  }
 
   const onSubmit = (data: TodoFormValues) => {
     createMutation.mutate(data);
@@ -123,7 +110,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
         {/* Create Todo Form */}
         <div className="md:col-span-1 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 h-fit">
-          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Add New Task</h2>
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Add Public Task</h2>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <input
