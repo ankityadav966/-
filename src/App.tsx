@@ -13,16 +13,16 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           
-          {/* Support /todos */}
+          {/* Primary Route: /ankityadav */}
+          <Route path="/ankityadav" element={<TodoLayout />}>
+            <Route index element={<Dashboard />} />
+          </Route>
+
+          {/* Fallback routes */}
           <Route path="/todos" element={<TodoLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
-          </Route>
-
-          {/* Support /ankit & /ankit/yadav */}
-          <Route path="/ankit" element={<TodoLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="yadav" element={<Dashboard />} />
+            <Route path="ankityadav" element={<Dashboard />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

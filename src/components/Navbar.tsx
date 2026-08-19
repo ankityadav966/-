@@ -10,7 +10,7 @@ const navLinks = [
   { label: 'सड़क एवं सुविधाएँ', href: '#infrastructure' },
   { label: 'पंचायत', href: '#panchayat' },
   { label: 'डिजिटल सेवाएँ', href: '#digital' },
-  { label: 'टास्क/Todo', href: '/todos' },
+  { label: 'टास्क/Todo', href: '/ankityadav' },
 ];
 
 const Navbar: React.FC = () => {
