@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 const navLinks = [
@@ -13,6 +14,7 @@ const navLinks = [
 ];
 
 const Navbar: React.FC = () => {
+  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -25,7 +27,7 @@ const Navbar: React.FC = () => {
   const handleNavClick = (href: string) => {
     setMenuOpen(false);
     if (href.startsWith('/')) {
-      window.location.href = href;
+      navigate(href);
       return;
     }
     const el = document.querySelector(href);

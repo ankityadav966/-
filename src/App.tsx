@@ -13,9 +13,10 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/todos" element={<TodoLayout />}>
-            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
           </Route>
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
