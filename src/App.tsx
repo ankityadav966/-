@@ -12,19 +12,9 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          
-          {/* Primary Route: /ankityadav */}
           <Route path="/ankityadav" element={<TodoLayout />}>
             <Route index element={<Dashboard />} />
           </Route>
-
-          {/* Fallback routes */}
-          <Route path="/todos" element={<TodoLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="ankityadav" element={<Dashboard />} />
-          </Route>
-
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
